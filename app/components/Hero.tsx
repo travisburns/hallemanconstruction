@@ -1,8 +1,12 @@
-import Link from 'next/link'
+'use client'
 
-export default function Hero() {
+interface HeroProps {
+  onOpenEstimator?: () => void
+}
+
+export default function Hero({ onOpenEstimator }: HeroProps) {
   return (
-    <section className="bg-gradient-to-br from-[#2c3e50] to-[#34495e] text-white py-24 text-center">
+    <section className="bg-gradient-to-br from-[#2c3e50] to-[#34495e] text-white py-24 text-center" id="home">
       <div className="container">
         <h2 className="text-3xl md:text-5xl font-bold mb-4">
           Eugene&apos;s Trusted Remodeling Contractor
@@ -15,24 +19,27 @@ export default function Hero() {
           we bring over 15 years of experience to every project.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-          <Link href="/contact" className="btn-primary text-lg px-8 py-4 hover:-translate-y-0.5 transition-transform text-center">
+          <button
+            onClick={onOpenEstimator}
+            className="btn-primary text-lg px-8 py-4 hover:-translate-y-0.5 transition-transform"
+          >
             Get Your Free Estimate
-          </Link>
+          </button>
           <a href="tel:5415254133" className="border-2 border-white text-white px-8 py-4 rounded text-lg font-semibold text-center hover:bg-white hover:text-secondary transition-colors">
             Call (541) 525-4133
           </a>
         </div>
         <div className="flex flex-wrap gap-12 justify-center">
-          <div className="flex items-center gap-2">
-            <span className="text-accent font-bold text-xl">✓</span>
+          <div className="trust-item">
+            <span className="trust-icon">✓</span>
             <span>Licensed &amp; Insured</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-accent font-bold text-xl">✓</span>
+          <div className="trust-item">
+            <span className="trust-icon">✓</span>
             <span>15+ Years Experience</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-accent font-bold text-xl">✓</span>
+          <div className="trust-item">
+            <span className="trust-icon">✓</span>
             <span>Family Owned</span>
           </div>
         </div>

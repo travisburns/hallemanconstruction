@@ -2,8 +2,18 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-export default function Header() {
+interface HeaderProps {
+  onOpenEstimator?: () => void
+}
+
+export default function Header({ onOpenEstimator }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const handleEstimate = () => {
+    if (onOpenEstimator) {
+      onOpenEstimator()
+    }
+  }
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-[1000]">
@@ -25,9 +35,15 @@ export default function Header() {
             <a href="tel:5415254133" className="text-primary font-bold text-lg hover:text-primary-dark">
               (541) 525-4133
             </a>
-            <Link href="/contact" className="btn-primary">
-              Get Free Estimate
-            </Link>
+            {onOpenEstimator ? (
+              <button onClick={handleEstimate} className="btn-estimate">
+                Get Free Estimate
+              </button>
+            ) : (
+              <Link href="/contact" className="btn-estimate">
+                Get Free Estimate
+              </Link>
+            )}
           </div>
 
           <button
@@ -49,7 +65,11 @@ export default function Header() {
               <Link href="/about" className="text-secondary hover:text-primary font-medium">About</Link>
               <Link href="/contact" className="text-secondary hover:text-primary font-medium">Contact</Link>
               <a href="tel:5415254133" className="text-primary font-bold">(541) 525-4133</a>
-              <Link href="/contact" className="btn-primary inline-block text-center">Get Free Estimate</Link>
+              {onOpenEstimator ? (
+                <button onClick={handleEstimate} className="btn-estimate text-center">Get Free Estimate</button>
+              ) : (
+                <Link href="/contact" className="btn-estimate inline-block text-center">Get Free Estimate</Link>
+              )}
             </nav>
           </div>
         )}
