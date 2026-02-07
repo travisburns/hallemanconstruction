@@ -81,7 +81,7 @@ export default function Contact() {
         {/* Contact Section */}
         <section className="section-padding">
           <div className="container">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
               {/* Contact Info */}
               <div>
                 <h2 className="text-3xl font-bold mb-6">Get in Touch</h2>
@@ -89,7 +89,7 @@ export default function Contact() {
                   Ready to start your construction or remodeling project? Contact us today for a free estimate. We'll discuss your project needs and provide a detailed quote.
                 </p>
 
-                <div className="space-y-6">
+                <div className="space-y-8">
                   <div>
                     <h3 className="font-bold text-xl mb-2">Phone</h3>
                     <a href="tel:5415254133" className="text-primary text-lg hover:text-primary-dark">
@@ -126,7 +126,7 @@ export default function Contact() {
                     <p>We've received your request and will contact you within 24 hours.</p>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form onSubmit={handleSubmit} className="space-y-6">
                     {submitError && (
                       <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
                         {submitError}

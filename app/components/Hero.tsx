@@ -6,7 +6,7 @@ interface HeroProps {
 
 export default function Hero({ onOpenEstimator }: HeroProps) {
   return (
-    <section className="bg-gradient-to-br from-[#2c3e50] to-[#34495e] text-white py-24 text-center" id="home">
+    <section className="bg-gradient-to-br from-[#2c3e50] to-[#34495e] text-white py-40 text-center" id="home">
       <div className="container">
         <h2 className="text-3xl md:text-5xl font-bold mb-4">
           Eugene&apos;s Trusted Remodeling Contractor
