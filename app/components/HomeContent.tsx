@@ -16,7 +16,7 @@ export default function HomeContent() {
         <Hero onOpenEstimator={() => setEstimatorOpen(true)} />
 
         {/* Services */}
-        <section className="py-24 bg-gray-50" id="services">
+        <section className="py-32 bg-gray-50" id="services">
           <div className="container">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-secondary mb-4">Our Services</h2>
@@ -64,7 +64,7 @@ export default function HomeContent() {
         </section>
 
         {/* Why Choose Us */}
-        <section className="py-24" id="about">
+        <section className="py-32" id="about">
           <div className="container">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
               <div>
@@ -96,7 +96,7 @@ export default function HomeContent() {
         </section>
 
         {/* Gallery */}
-        <section className="py-24 bg-gray-50" id="gallery">
+        <section className="py-32 bg-gray-50" id="gallery">
           <div className="container">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-secondary mb-4">Our Work</h2>
@@ -129,7 +129,7 @@ export default function HomeContent() {
         </section>
 
         {/* Service Areas */}
-        <section className="py-24">
+        <section className="py-32">
           <div className="container">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-secondary mb-4">Serving Lane County</h2>
@@ -152,7 +152,7 @@ export default function HomeContent() {
         </section>
 
         {/* CTA */}
-        <section className="py-24 bg-gradient-to-br from-primary to-primary-dark text-white text-center" id="contact">
+        <section className="py-32 bg-gradient-to-br from-primary to-primary-dark text-white text-center" id="contact">
           <div className="container">
             <h2 className="text-4xl font-bold mb-4">Ready to Start Your Project?</h2>
             <p className="text-xl mb-12 max-w-[700px] mx-auto">
