@@ -64,11 +64,11 @@ export default function HomeContent() {
         </section>
 
         {/* Why Choose Us */}
-        <section className="py-32" id="about">
+        <section className="why-choose" id="about">
           <div className="container">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-              <div>
-                <h2 className="text-4xl font-bold mb-12">Why Choose Halleman Construction?</h2>
+            <div className="why-choose-content">
+              <div className="why-choose-text">
+                <h2>Why Choose Halleman Construction?</h2>
                 <div className="feature">
                   <h3>ServiceMaster Professional Background</h3>
                   <p>Josh Halleman brings professional training and expertise from ServiceMaster, ensuring top-quality workmanship on every project.</p>
@@ -86,7 +86,7 @@ export default function HomeContent() {
                   <p>From small updates to complete remodels, we&apos;ve transformed hundreds of homes across Lane County.</p>
                 </div>
               </div>
-              <div>
+              <div className="why-choose-image">
                 <div className="image-placeholder">
                   [Family Photo / Josh on Jobsite]
                 </div>
@@ -96,75 +96,86 @@ export default function HomeContent() {
         </section>
 
         {/* Gallery */}
-        <section className="py-32 bg-gray-50" id="gallery">
+        <section className="featured-gallery" id="gallery">
           <div className="container">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-secondary mb-4">Our Work</h2>
-              <p className="text-xl text-gray-500">See the quality and craftsmanship we bring to every project</p>
+            <div className="section-header">
+              <h2>Our Work</h2>
+              <p>See the quality and craftsmanship we bring to every project</p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-              {[
-                { title: 'Kitchen Remodel', location: 'Eugene, OR' },
-                { title: 'Bathroom Renovation', location: 'Cottage Grove, OR' },
-                { title: 'Custom Deck', location: 'Veneta, OR' },
-                { title: 'Tile Installation', location: 'Coburg, OR' },
-              ].map((item, i) => (
-                <div key={i} className="gallery-item">
-                  <div className="gallery-image-placeholder">
-                    [Project Photo {i + 1}]
-                  </div>
-                  <div className="gallery-info">
-                    <h4>{item.title}</h4>
-                    <p>{item.location}</p>
-                  </div>
+            <div className="gallery-grid">
+              <div className="gallery-item">
+                <div className="gallery-image-placeholder">[Project Photo 1]</div>
+                <div className="gallery-info">
+                  <h4>Kitchen Remodel</h4>
+                  <p>Eugene, OR</p>
                 </div>
-              ))}
+              </div>
+              <div className="gallery-item">
+                <div className="gallery-image-placeholder">[Project Photo 2]</div>
+                <div className="gallery-info">
+                  <h4>Bathroom Renovation</h4>
+                  <p>Cottage Grove, OR</p>
+                </div>
+              </div>
+              <div className="gallery-item">
+                <div className="gallery-image-placeholder">[Project Photo 3]</div>
+                <div className="gallery-info">
+                  <h4>Custom Deck</h4>
+                  <p>Veneta, OR</p>
+                </div>
+              </div>
+              <div className="gallery-item">
+                <div className="gallery-image-placeholder">[Project Photo 4]</div>
+                <div className="gallery-info">
+                  <h4>Tile Installation</h4>
+                  <p>Coburg, OR</p>
+                </div>
+              </div>
             </div>
-            <div className="text-center">
-              <Link href="/gallery" className="btn-secondary" style={{ color: '#2c3e50', borderColor: '#2c3e50' }}>
-                View Full Gallery
-              </Link>
+            <div className="gallery-cta">
+              <Link href="/gallery" className="btn-secondary gallery-btn">View Full Gallery</Link>
             </div>
           </div>
         </section>
 
         {/* Service Areas */}
-        <section className="py-32">
+        <section className="service-areas">
           <div className="container">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-secondary mb-4">Serving Lane County</h2>
-              <p className="text-xl text-gray-500">Professional remodeling services throughout the Eugene area</p>
+            <div className="section-header">
+              <h2>Serving Lane County</h2>
+              <p>Professional remodeling services throughout the Eugene area</p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[
-                { name: 'Eugene', desc: 'Complete home remodeling services in Eugene and surrounding neighborhoods' },
-                { name: 'Cottage Grove', desc: 'Kitchen, bathroom, and deck services for Cottage Grove residents' },
-                { name: 'Veneta', desc: 'Trusted contractor for Veneta homeowners' },
-                { name: 'Coburg', desc: 'Quality remodeling in Coburg and the surrounding area' },
-              ].map((area, i) => (
-                <div key={i} className="area-card">
-                  <h3>{area.name}</h3>
-                  <p>{area.desc}</p>
-                </div>
-              ))}
+            <div className="areas-grid">
+              <div className="area-card">
+                <h3>Eugene</h3>
+                <p>Complete home remodeling services in Eugene and surrounding neighborhoods</p>
+              </div>
+              <div className="area-card">
+                <h3>Cottage Grove</h3>
+                <p>Kitchen, bathroom, and deck services for Cottage Grove residents</p>
+              </div>
+              <div className="area-card">
+                <h3>Veneta</h3>
+                <p>Trusted contractor for Veneta homeowners</p>
+              </div>
+              <div className="area-card">
+                <h3>Coburg</h3>
+                <p>Quality remodeling in Coburg and the surrounding area</p>
+              </div>
             </div>
           </div>
         </section>
 
         {/* CTA */}
-        <section className="py-32 bg-gradient-to-br from-primary to-primary-dark text-white text-center" id="contact">
+        <section className="cta-section" id="contact">
           <div className="container">
-            <h2 className="text-4xl font-bold mb-4">Ready to Start Your Project?</h2>
-            <p className="text-xl mb-12 max-w-[700px] mx-auto">
-              Get a free, no-obligation estimate today. We&apos;ll discuss your vision and provide a detailed quote.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button onClick={() => setEstimatorOpen(true)} className="btn-primary text-lg px-8 py-4">
-                Get Free Estimate
-              </button>
-              <a href="tel:5415254133" className="bg-white text-primary px-8 py-4 rounded text-xl font-bold hover:bg-gray-100 text-center">
-                (541) 525-4133
-              </a>
+            <div className="cta-content">
+              <h2>Ready to Start Your Project?</h2>
+              <p>Get a free, no-obligation estimate today. We&apos;ll discuss your vision and provide a detailed quote.</p>
+              <div className="cta-buttons">
+                <button className="btn-primary" onClick={() => setEstimatorOpen(true)}>Get Free Estimate</button>
+                <a href="tel:5415254133" className="btn-phone-large">(541) 525-4133</a>
+              </div>
             </div>
           </div>
         </section>
