@@ -14,9 +14,9 @@ body {
 }
 
 .container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 0.5rem;
+  padding: 0 2rem;
 }
 
 /* Header */
@@ -384,16 +384,6 @@ body {
   text-align: center;
 }
 
-.gallery-btn {
-  color: #2c3e50;
-  border-color: #2c3e50;
-}
-
-.gallery-btn:hover {
-  background: #2c3e50;
-  color: white;
-}
-
 /* Service Areas */
 .service-areas {
   padding: 6rem 0;
@@ -611,6 +601,7 @@ body {
   color: #2c3e50;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .nav {
     display: none;
@@ -620,15 +611,6 @@ body {
   }
   .header-cta .btn-estimate {
     display: none;
-  }
-  .section-padding {
-    padding: 4rem 0;
-  }
-  .section-header h2 {
-    font-size: 2rem;
-  }
-  .container {
-    padding: 0 0.5rem;
   }
   .hero-title {
     font-size: 2rem;

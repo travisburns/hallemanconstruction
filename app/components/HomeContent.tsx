@@ -133,7 +133,7 @@ export default function HomeContent() {
               </div>
             </div>
             <div className="gallery-cta">
-              <Link href="/gallery" className="btn-secondary gallery-btn">View Full Gallery</Link>
+              <Link href="/gallery" className="btn-secondary">View Full Gallery</Link>
             </div>
           </div>
         </section>
