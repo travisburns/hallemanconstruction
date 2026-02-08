@@ -16,25 +16,27 @@ export default function Header({ onOpenEstimator }: HeaderProps) {
   }
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-[1000]">
+    <header className="header">
       <div className="container">
-        <div className="flex justify-between items-center py-4">
-          <Link href="/" className="text-2xl font-bold text-secondary">
-            Halleman Construction <span className="text-primary font-normal text-base">LLC</span>
-          </Link>
+        <div className="header-content">
+          <div className="logo">
+            <h1>
+              <Link href="/">Halleman Construction <span>LLC</span></Link>
+            </h1>
+          </div>
 
-          <nav className="hidden md:flex space-x-8">
-            <Link href="/" className="text-secondary hover:text-primary font-medium">Home</Link>
-            <Link href="/services" className="text-secondary hover:text-primary font-medium">Services</Link>
-            <Link href="/gallery" className="text-secondary hover:text-primary font-medium">Gallery</Link>
-            <Link href="/about" className="text-secondary hover:text-primary font-medium">About</Link>
-            <Link href="/contact" className="text-secondary hover:text-primary font-medium">Contact</Link>
+          <nav className="nav">
+            <ul>
+              <li><Link href="/">Home</Link></li>
+              <li><Link href="/services">Services</Link></li>
+              <li><Link href="/gallery">Gallery</Link></li>
+              <li><Link href="/about">About</Link></li>
+              <li><Link href="/contact">Contact</Link></li>
+            </ul>
           </nav>
 
-          <div className="hidden md:flex items-center space-x-4">
-            <a href="tel:5415254133" className="text-primary font-bold text-lg hover:text-primary-dark">
-              (541) 525-4133
-            </a>
+          <div className="header-cta">
+            <a href="tel:5415254133" className="btn-phone">(541) 525-4133</a>
             {onOpenEstimator ? (
               <button onClick={handleEstimate} className="btn-estimate">
                 Get Free Estimate
@@ -47,29 +49,33 @@ export default function Header({ onOpenEstimator }: HeaderProps) {
           </div>
 
           <button
+            className="mobile-menu-toggle"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden flex flex-col gap-[5px]"
           >
-            <span className="w-[25px] h-[3px] bg-secondary block"></span>
-            <span className="w-[25px] h-[3px] bg-secondary block"></span>
-            <span className="w-[25px] h-[3px] bg-secondary block"></span>
+            <span></span>
+            <span></span>
+            <span></span>
           </button>
         </div>
 
         {mobileMenuOpen && (
-          <div className="md:hidden pb-4">
-            <nav className="flex flex-col space-y-4">
-              <Link href="/" className="text-secondary hover:text-primary font-medium">Home</Link>
-              <Link href="/services" className="text-secondary hover:text-primary font-medium">Services</Link>
-              <Link href="/gallery" className="text-secondary hover:text-primary font-medium">Gallery</Link>
-              <Link href="/about" className="text-secondary hover:text-primary font-medium">About</Link>
-              <Link href="/contact" className="text-secondary hover:text-primary font-medium">Contact</Link>
-              <a href="tel:5415254133" className="text-primary font-bold">(541) 525-4133</a>
-              {onOpenEstimator ? (
-                <button onClick={handleEstimate} className="btn-estimate text-center">Get Free Estimate</button>
-              ) : (
-                <Link href="/contact" className="btn-estimate inline-block text-center">Get Free Estimate</Link>
-              )}
+          <div className="mobile-menu">
+            <nav>
+              <ul>
+                <li><Link href="/">Home</Link></li>
+                <li><Link href="/services">Services</Link></li>
+                <li><Link href="/gallery">Gallery</Link></li>
+                <li><Link href="/about">About</Link></li>
+                <li><Link href="/contact">Contact</Link></li>
+                <li><a href="tel:5415254133" className="btn-phone">(541) 525-4133</a></li>
+                <li>
+                  {onOpenEstimator ? (
+                    <button onClick={handleEstimate} className="btn-estimate">Get Free Estimate</button>
+                  ) : (
+                    <Link href="/contact" className="btn-estimate">Get Free Estimate</Link>
+                  )}
+                </li>
+              </ul>
             </nav>
           </div>
         )}
