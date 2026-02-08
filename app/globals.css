@@ -238,6 +238,18 @@ body {
   color: #7f8c8d;
 }
 
+/* Services Section */
+.services {
+  padding: 6rem 0;
+  background: #f8f9fa;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
 .service-card {
   background: white;
   padding: 2rem;

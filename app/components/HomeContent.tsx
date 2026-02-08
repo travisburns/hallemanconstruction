@@ -16,13 +16,13 @@ export default function HomeContent() {
         <Hero onOpenEstimator={() => setEstimatorOpen(true)} />
 
         {/* Services */}
-        <section className="py-32 bg-gray-50" id="services">
+        <section className="services" id="services">
           <div className="container">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-secondary mb-4">Our Services</h2>
-              <p className="text-xl text-gray-500">Expert residential remodeling for homes throughout Lane County</p>
+            <div className="section-header">
+              <h2>Our Services</h2>
+              <p>Expert residential remodeling for homes throughout Lane County</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="services-grid">
               <div className="service-card">
                 <div className="service-icon">🔧</div>
                 <h3>Tile Design &amp; Installation</h3>
