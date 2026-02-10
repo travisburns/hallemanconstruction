@@ -10,7 +10,7 @@ export function useLeads() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (authApi.isAuthenticated()) {
+    if (typeof window !== 'undefined' && authApi.isAuthenticated()) {
       fetchLeads()
       fetchStats()
     } else {
