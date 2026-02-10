@@ -6,7 +6,7 @@ import { formatDate, formatPhoneNumber, formatCurrency, getStatusColor, getPrior
 
 export default function AdminDashboard() {
   const { isAuthenticated, isLoading: authLoading, user, login, logout } = useAuth()
-  const { leads, stats, isLoading: leadsLoading, updateLead } = useLeads()
+  const { leads, stats, isLoading: leadsLoading, updateLead } = useLeads(isAuthenticated)
   
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
