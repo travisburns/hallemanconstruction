@@ -3,16 +3,20 @@ import { useState, useEffect } from 'react'
 import { leadsApi } from '../lib/api'
 import type { Lead, LeadStats } from '../lib/types'
 
-export function useLeads() {
+export function useLeads(isAuthenticated: boolean) {
   const [leads, setLeads] = useState<Lead[]>([])
   const [stats, setStats] = useState<LeadStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchLeads()
-    fetchStats()
-  }, [])
+    if (isAuthenticated) {
+      fetchLeads()
+      fetchStats()
+    } else {
+      setIsLoading(false)
+    }
+  }, [isAuthenticated])
 
   const fetchLeads = async () => {
     try {
