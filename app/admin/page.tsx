@@ -6,7 +6,7 @@ import { formatDate, formatPhoneNumber, formatCurrency, getStatusColor, getPrior
 
 export default function AdminDashboard() {
   const { isAuthenticated, isLoading: authLoading, user, login, logout } = useAuth()
-  const { leads, stats, isLoading: leadsLoading, updateLead } = useLeads()
+  const { leads, stats, isLoading: leadsLoading, updateLead, refreshLeads } = useLeads()
   
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -18,7 +18,9 @@ export default function AdminDashboard() {
     setLoginError('')
     
     const success = await login({ username, password })
-    if (!success) {
+    if (success) {
+      refreshLeads()
+    } else {
       setLoginError('Invalid username or password')
     }
   }

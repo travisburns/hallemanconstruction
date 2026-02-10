@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { leadsApi } from '../lib/api'
+import { leadsApi, authApi } from '../lib/api'
 import type { Lead, LeadStats } from '../lib/types'
 
 export function useLeads() {
@@ -10,8 +10,12 @@ export function useLeads() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchLeads()
-    fetchStats()
+    if (authApi.isAuthenticated()) {
+      fetchLeads()
+      fetchStats()
+    } else {
+      setIsLoading(false)
+    }
   }, [])
 
   const fetchLeads = async () => {
