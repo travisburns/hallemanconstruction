@@ -1,6 +1,7 @@
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export const metadata = {
   title: 'Project Gallery | Halleman Construction LLC Eugene OR',
@@ -47,7 +48,14 @@ export default function Gallery() {
               </div>
 
               <div className="bg-gray-200 rounded-lg overflow-hidden shadow-lg aspect-square flex items-center justify-center">
+                       
                 <div className="text-center p-6">
+                      <Image
+                  src="/bathroom.jpg"
+                  alt="bathroom"
+                  width={500}
+                  height={350}
+                />
                   <p className="text-gray-600 font-semibold mb-2">Bathroom Renovation</p>
                   <p className="text-sm text-gray-500">Shower Remodel - Veneta</p>
                 </div>

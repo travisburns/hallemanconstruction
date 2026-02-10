@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from "next/image"
 import Header from './Header'
 import Footer from './Footer'
 import Hero from './Hero'
@@ -88,7 +89,12 @@ export default function HomeContent() {
               </div>
               <div className="why-choose-image">
                 <div className="image-placeholder">
-                  [Family Photo / Josh on Jobsite]
+                  <Image
+  src="/hallemanfamily.jpg"
+  alt="Halleman family"
+  width={500}
+  height={350}
+/>
                 </div>
               </div>
             </div>
