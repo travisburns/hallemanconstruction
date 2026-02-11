@@ -19,6 +19,19 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+// If we get a 401, the token is expired/invalid - clear it and force re-login
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('authToken')
+      localStorage.removeItem('userData')
+      window.location.href = '/admin'
+    }
+    return Promise.reject(error)
+  }
+)
+
 // Leads API
 export const leadsApi = {
   create: async (data: LeadCreateDto) => {
