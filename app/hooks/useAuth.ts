@@ -15,22 +15,22 @@ export function useAuth() {
   const checkAuth = () => {
     const authenticated = authApi.isAuthenticated()
     setIsAuthenticated(authenticated)
-    
+
     if (authenticated) {
-      const userData = localStorage.getItem('userData')
+      const userData = sessionStorage.getItem('userData')
       if (userData) {
         setUser(JSON.parse(userData))
       }
     }
-    
+
     setIsLoading(false)
   }
 
   const login = async (credentials: LoginRequest): Promise<boolean> => {
     try {
       const response = await authApi.login(credentials)
-      localStorage.setItem('authToken', response.token)
-      localStorage.setItem('userData', JSON.stringify(response))
+      sessionStorage.setItem('authToken', response.token)
+      sessionStorage.setItem('userData', JSON.stringify(response))
       setUser(response)
       setIsAuthenticated(true)
       return true
@@ -42,7 +42,6 @@ export function useAuth() {
 
   const logout = () => {
     authApi.logout()
-    localStorage.removeItem('userData')
     setUser(null)
     setIsAuthenticated(false)
   }
