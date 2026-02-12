@@ -92,7 +92,7 @@ export default function AdminDashboard() {
             <h1 className="text-2xl font-bold text-secondary">Halleman Construction - Admin</h1>
             <div className="flex items-center gap-4">
               <span className="text-gray-600">Welcome, {user?.fullName}</span>
-              <button onClick={logout} className="btn-secondary">
+              <button onClick={logout} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
                 Logout
               </button>
             </div>
