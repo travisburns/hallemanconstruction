@@ -172,45 +172,65 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
       onClick={(e) => {
         if (e.target === e.currentTarget) handleClose()
       }}
     >
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-2xl font-bold">Free Project Estimate</h2>
-          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
+      <div
+        className="bg-white shadow-xl w-full max-h-[90vh] overflow-y-auto"
+        style={{ maxWidth: '640px', margin: '16px' }}
+      >
+        {/* Header */}
+        <div
+          className="flex justify-between items-center border-b border-gray-200"
+          style={{ padding: '28px 40px' }}
+        >
+          <h2 className="text-2xl font-bold text-gray-900">Free Project Estimate</h2>
+          <button
+            onClick={handleClose}
+            className="text-gray-400 hover:text-gray-600 text-3xl leading-none"
+            style={{ marginRight: '-8px' }}
+          >
+            &times;
+          </button>
         </div>
 
-        <div className="p-6">
+        {/* Content */}
+        <div style={{ padding: '32px 40px 40px 40px' }}>
           {/* Step 1: Pick project type */}
           {step === 'project' && (
             <div>
-              <p className="text-gray-600 mb-6">What type of project are you planning?</p>
-              <div className="grid grid-cols-2 gap-3">
+              <p className="text-gray-600" style={{ marginBottom: '24px' }}>
+                What type of project are you planning?
+              </p>
+              <div className="grid grid-cols-2" style={{ gap: '16px' }}>
                 {Object.entries(PROJECT_RATES).map(([key, val]) => (
                   <button
                     key={key}
                     onClick={() => selectProject(key)}
-                    className="p-4 border-2 border-gray-200 rounded-lg hover:border-primary hover:bg-orange-50 transition-colors text-left"
+                    className="border-2 border-gray-200 hover:border-orange-400 hover:bg-orange-50 transition-colors text-left"
+                    style={{ padding: '20px 24px' }}
                   >
-                    <span className="font-semibold text-secondary">{val.label}</span>
+                    <span className="font-semibold text-gray-800">{val.label}</span>
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-gray-400 mt-4">Estimates based on Lane County, Oregon rates.</p>
+              <p className="text-xs text-gray-400" style={{ marginTop: '20px' }}>
+                Estimates based on Lane County, Oregon rates.
+              </p>
             </div>
           )}
 
           {/* Step 2: Project details */}
           {step === 'details' && rates && (
             <div>
-              <h3 className="font-bold text-lg mb-4">{rates.label}</h3>
+              <h3 className="font-bold text-lg" style={{ marginBottom: '24px' }}>{rates.label}</h3>
 
               {rates.unit !== 'project' && (
-                <div className="mb-6">
-                  <label className="block font-semibold mb-2">
+                <div style={{ marginBottom: '32px' }}>
+                  <label className="block font-semibold" style={{ marginBottom: '12px' }}>
                     Project Size ({rates.unit})
                   </label>
                   <input
@@ -221,29 +241,30 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
                     onChange={(e) => setSize(Number(e.target.value))}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-sm text-gray-500 mt-1">
+                  <div className="flex justify-between text-sm text-gray-500" style={{ marginTop: '8px' }}>
                     <span>{rates.minSize} {rates.unit}</span>
-                    <span className="font-bold text-secondary text-lg">{size} {rates.unit}</span>
+                    <span className="font-bold text-gray-800 text-lg">{size} {rates.unit}</span>
                     <span>{rates.maxSize} {rates.unit}</span>
                   </div>
                 </div>
               )}
 
-              <div className="mb-6">
-                <label className="block font-semibold mb-2">Project Tier</label>
-                <div className="grid grid-cols-3 gap-3">
+              <div style={{ marginBottom: '32px' }}>
+                <label className="block font-semibold" style={{ marginBottom: '12px' }}>Project Tier</label>
+                <div className="grid grid-cols-3" style={{ gap: '16px' }}>
                   {(['basic', 'mid', 'high'] as const).map((level) => (
                     <button
                       key={level}
                       onClick={() => setComplexity(level)}
-                      className={`p-3 border-2 rounded-lg text-center transition-colors ${
+                      className={`border-2 text-center transition-colors ${
                         complexity === level
-                          ? 'border-primary bg-orange-50 text-primary font-bold'
+                          ? 'border-orange-500 bg-orange-50 font-bold'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
+                      style={{ padding: '16px 12px' }}
                     >
                       <div className="font-semibold capitalize">{level === 'mid' ? 'Standard' : level === 'basic' ? 'Basic' : 'Premium'}</div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500" style={{ marginTop: '4px' }}>
                         {level === 'basic' ? 'Budget-friendly' : level === 'mid' ? 'Most popular' : 'High-end finishes'}
                       </div>
                     </button>
@@ -251,10 +272,11 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex" style={{ gap: '16px' }}>
                 <button
                   onClick={() => setStep('project')}
-                  className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="border border-gray-300 hover:bg-gray-50 transition-colors"
+                  style={{ padding: '14px 28px' }}
                 >
                   Back
                 </button>
@@ -271,27 +293,35 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
           {/* Step 3: Show estimate */}
           {step === 'estimate' && rates && (
             <div>
-              <h3 className="font-bold text-lg mb-2">{rates.label} Estimate</h3>
+              <h3 className="font-bold text-lg" style={{ marginBottom: '12px' }}>{rates.label} Estimate</h3>
               {rates.unit !== 'project' && (
-                <p className="text-gray-500 mb-4">{size} {rates.unit} &middot; {complexity === 'mid' ? 'Standard' : complexity === 'basic' ? 'Basic' : 'Premium'} tier</p>
+                <p className="text-gray-500" style={{ marginBottom: '24px' }}>
+                  {size} {rates.unit} &middot; {complexity === 'mid' ? 'Standard' : complexity === 'basic' ? 'Basic' : 'Premium'} tier
+                </p>
               )}
 
-              <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6 text-center">
-                <p className="text-gray-600 mb-1">Estimated Cost Range</p>
+              <div
+                className="bg-green-50 border border-green-200 text-center"
+                style={{ padding: '32px 24px', marginBottom: '28px' }}
+              >
+                <p className="text-gray-600" style={{ marginBottom: '8px' }}>Estimated Cost Range</p>
                 <p className="text-3xl font-bold text-green-700">
                   ${estimateLow.toLocaleString()} &ndash; ${estimateHigh.toLocaleString()}
                 </p>
-                <p className="text-xs text-gray-500 mt-2">Based on current Lane County, OR contractor rates</p>
+                <p className="text-xs text-gray-500" style={{ marginTop: '12px' }}>
+                  Based on current Lane County, OR contractor rates
+                </p>
               </div>
 
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600" style={{ marginBottom: '24px' }}>
                 Want an exact quote? Leave your info and we&apos;ll get back to you within 24 hours.
               </p>
 
-              <div className="flex gap-3">
+              <div className="flex" style={{ gap: '16px' }}>
                 <button
                   onClick={() => setStep('details')}
-                  className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="border border-gray-300 hover:bg-gray-50 transition-colors"
+                  style={{ padding: '14px 28px' }}
                 >
                   Adjust
                 </button>
@@ -303,8 +333,8 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
                 </button>
               </div>
 
-              <div className="mt-4 text-center">
-                <a href="tel:5415254133" className="text-primary font-semibold hover:underline">
+              <div className="text-center" style={{ marginTop: '20px' }}>
+                <a href="tel:5415254133" className="text-orange-600 font-semibold hover:underline">
                   Or call us: (541) 525-4133
                 </a>
               </div>
@@ -314,48 +344,55 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
           {/* Step 4: Contact info */}
           {step === 'contact' && (
             <div>
-              <h3 className="font-bold text-lg mb-4">Get Your Exact Quote</h3>
-              <div className="bg-gray-50 rounded-lg p-3 mb-4 text-sm">
+              <h3 className="font-bold text-lg" style={{ marginBottom: '20px' }}>Get Your Exact Quote</h3>
+              <div
+                className="bg-gray-50 text-sm"
+                style={{ padding: '16px 20px', marginBottom: '24px' }}
+              >
                 <span className="font-semibold">{PROJECT_RATES[projectType]?.label}</span> &middot; ${estimateLow.toLocaleString()} &ndash; ${estimateHigh.toLocaleString()}
               </div>
 
-              <div className="space-y-4">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div>
-                  <label className="block font-semibold mb-1">Full Name *</label>
+                  <label className="block font-semibold" style={{ marginBottom: '8px' }}>Full Name *</label>
                   <input
                     type="text"
                     value={contactInfo.fullName}
                     onChange={(e) => setContactInfo({ ...contactInfo, fullName: e.target.value })}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    style={{ padding: '12px 16px' }}
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold mb-1">Email *</label>
+                  <label className="block font-semibold" style={{ marginBottom: '8px' }}>Email *</label>
                   <input
                     type="email"
                     value={contactInfo.email}
                     onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    style={{ padding: '12px 16px' }}
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold mb-1">Phone *</label>
+                  <label className="block font-semibold" style={{ marginBottom: '8px' }}>Phone *</label>
                   <input
                     type="tel"
                     value={contactInfo.phone}
                     onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    style={{ padding: '12px 16px' }}
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-6">
+              <div className="flex" style={{ gap: '16px', marginTop: '28px' }}>
                 <button
                   onClick={() => setStep('estimate')}
-                  className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="border border-gray-300 hover:bg-gray-50 transition-colors"
+                  style={{ padding: '14px 28px' }}
                 >
                   Back
                 </button>
@@ -372,10 +409,10 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
 
           {/* Step 5: Success */}
           {step === 'submitted' && (
-            <div className="text-center py-6">
-              <div className="text-5xl mb-4">&#10003;</div>
-              <h3 className="font-bold text-xl mb-2">Request Submitted!</h3>
-              <p className="text-gray-600 mb-6">
+            <div className="text-center" style={{ padding: '32px 0' }}>
+              <div className="text-5xl" style={{ marginBottom: '20px' }}>&#10003;</div>
+              <h3 className="font-bold text-xl" style={{ marginBottom: '12px' }}>Request Submitted!</h3>
+              <p className="text-gray-600" style={{ marginBottom: '28px' }}>
                 We&apos;ll review your project details and get back to you within 24 hours with an exact quote.
               </p>
               <button onClick={handleClose} className="btn-primary">
