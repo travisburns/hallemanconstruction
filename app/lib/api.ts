@@ -10,14 +10,43 @@ const api = axios.create({
   },
 })
 
-// Add auth token to requests if available
+// Check if JWT token is expired by decoding the payload
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return payload.exp * 1000 < Date.now()
+  } catch {
+    return true
+  }
+}
+
+// Add auth token to requests if available and not expired
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('authToken')
+  const token = sessionStorage.getItem('authToken')
   if (token) {
+    if (isTokenExpired(token)) {
+      sessionStorage.removeItem('authToken')
+      sessionStorage.removeItem('userData')
+      window.location.href = '/admin'
+      return Promise.reject(new Error('Token expired'))
+    }
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
 })
+
+// If we get a 401, the token is invalid - clear it and force re-login
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      sessionStorage.removeItem('authToken')
+      sessionStorage.removeItem('userData')
+      window.location.href = '/admin'
+    }
+    return Promise.reject(error)
+  }
+)
 
 // Leads API
 export const leadsApi = {
@@ -25,27 +54,27 @@ export const leadsApi = {
     const response = await api.post('/leads', data)
     return response.data
   },
-  
+
   getAll: async (): Promise<Lead[]> => {
     const response = await api.get('/leads')
     return response.data
   },
-  
+
   getById: async (id: number): Promise<Lead> => {
     const response = await api.get(`/leads/${id}`)
     return response.data
   },
-  
+
   update: async (id: number, data: Partial<Lead>) => {
     const response = await api.put(`/leads/${id}`, data)
     return response.data
   },
-  
+
   delete: async (id: number) => {
     const response = await api.delete(`/leads/${id}`)
     return response.data
   },
-  
+
   getStats: async (): Promise<LeadStats> => {
     const response = await api.get('/leads/stats')
     return response.data
@@ -58,13 +87,21 @@ export const authApi = {
     const response = await api.post('/auth/login', credentials)
     return response.data
   },
-  
+
   logout: () => {
-    localStorage.removeItem('authToken')
+    sessionStorage.removeItem('authToken')
+    sessionStorage.removeItem('userData')
   },
-  
+
   isAuthenticated: (): boolean => {
-    return !!localStorage.getItem('authToken')
+    const token = sessionStorage.getItem('authToken')
+    if (!token) return false
+    if (isTokenExpired(token)) {
+      sessionStorage.removeItem('authToken')
+      sessionStorage.removeItem('userData')
+      return false
+    }
+    return true
   },
 }
 
@@ -73,11 +110,11 @@ export const analyticsApi = {
   trackPageView: async (pageUrl: string, referrerUrl: string) => {
     await api.post('/analytics/page-view', { pageUrl, referrerUrl })
   },
-  
+
   trackPhoneClick: async (pageUrl: string) => {
     await api.post('/analytics/phone-click', { pageUrl })
   },
-  
+
   trackEmailClick: async (pageUrl: string) => {
     await api.post('/analytics/email-click', { pageUrl })
   },

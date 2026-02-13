@@ -9,7 +9,7 @@ export function useLeads(isAuthenticated: boolean) {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
+    useEffect(() => {
     if (isAuthenticated) {
       fetchLeads()
       fetchStats()
