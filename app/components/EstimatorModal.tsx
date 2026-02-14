@@ -2,12 +2,10 @@
 import { useEffect, useState } from 'react'
 import { leadsApi } from '../lib/api'
 import type { LeadCreateDto } from '../lib/types'
-
 interface EstimatorModalProps {
   isOpen: boolean
   onClose: () => void
 }
-
 const PROJECT_RATES: Record<string, { label: string; icon: string; unit: string; lowRate: number; highRate: number; defaultSize: number; minSize: number; maxSize: number; step: number }> = {
   tile: {
     label: 'Tile Installation',
@@ -76,15 +74,12 @@ const PROJECT_RATES: Record<string, { label: string; icon: string; unit: string;
     step: 25,
   },
 }
-
 const TIERS = [
   { key: 'basic' as const, label: 'Basic', desc: 'Budget-friendly materials', multiplier: 0.8 },
   { key: 'mid' as const, label: 'Standard', desc: 'Most popular choice', multiplier: 1.0 },
   { key: 'high' as const, label: 'Premium', desc: 'High-end finishes', multiplier: 1.3 },
 ]
-
 type Step = 'project' | 'details' | 'estimate' | 'contact' | 'submitted'
-
 export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps) {
   const [step, setStep] = useState<Step>('project')
   const [projectType, setProjectType] = useState('')
@@ -94,7 +89,6 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
   const [estimateHigh, setEstimateHigh] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [contactInfo, setContactInfo] = useState({ fullName: '', email: '', phone: '' })
-
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
@@ -103,13 +97,11 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
     }
     return () => { document.body.style.overflow = 'auto' }
   }, [isOpen])
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose])
-
   const reset = () => {
     setStep('project')
     setProjectType('')
@@ -119,15 +111,12 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
     setEstimateHigh(0)
     setContactInfo({ fullName: '', email: '', phone: '' })
   }
-
   const handleClose = () => { reset(); onClose() }
-
   const selectProject = (type: string) => {
     setProjectType(type)
     setSize(PROJECT_RATES[type].defaultSize)
     setStep('details')
   }
-
   const calculateEstimate = () => {
     const rates = PROJECT_RATES[projectType]
     if (!rates) return
@@ -141,7 +130,6 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
     }
     setStep('estimate')
   }
-
   const handleSubmitLead = async () => {
     setIsSubmitting(true)
     try {
@@ -168,13 +156,10 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
       setIsSubmitting(false)
     }
   }
-
   if (!isOpen) return null
-
   const rates = PROJECT_RATES[projectType]
   const stepNumber = step === 'project' ? 1 : step === 'details' ? 2 : step === 'estimate' ? 3 : step === 'contact' ? 4 : 5
   const totalSteps = 4
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -182,10 +167,8 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
     >
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-
       {/* Modal */}
       <div className="relative bg-white rounded-none shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-
         {/* Header */}
         <div className="bg-gradient-to-r from-[#2c3e50] to-[#34495e] px-12 py-10 text-white">
           <div className="flex justify-between items-start">
@@ -209,10 +192,8 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
             </div>
           )}
         </div>
-
         {/* Content */}
         <div className="px-10 py-10 overflow-y-auto flex-1">
-
           {/* Step 1: Pick project */}
           {step === 'project' && (
             <div>
@@ -234,7 +215,6 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
               </div>
             </div>
           )}
-
           {/* Step 2: Details */}
           {step === 'details' && rates && (
             <div>
@@ -243,7 +223,6 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
               </button>
               <h3 className="font-bold text-lg mb-1">{rates.icon} {rates.label}</h3>
               <p className="text-gray-400 text-sm mb-8">Adjust the details below</p>
-
               {rates.unit !== 'project' && (
                 <div className="mb-10">
                   <div className="flex justify-between items-baseline mb-3">
@@ -267,7 +246,6 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
                   </div>
                 </div>
               )}
-
               <div className="mb-10">
                 <label className="font-semibold text-[#2c3e50] block mb-3">Project Tier</label>
                 <div className="grid grid-cols-3 gap-4">
@@ -289,27 +267,23 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
                   ))}
                 </div>
               </div>
-
               <button onClick={calculateEstimate} className="w-full bg-[#d4662a] hover:bg-[#b85521] text-white font-bold py-3.5 rounded-none transition-colors">
                 Calculate Estimate
               </button>
             </div>
           )}
-
           {/* Step 3: Estimate result */}
           {step === 'estimate' && rates && (
             <div>
               <button onClick={() => setStep('details')} className="text-sm text-gray-400 hover:text-gray-600 mb-5 flex items-center gap-1">
                 &larr; Adjust
               </button>
-
               <div className="text-center mb-6">
                 <h3 className="font-bold text-lg text-[#2c3e50]">{rates.label}</h3>
                 {rates.unit !== 'project' && (
                   <p className="text-gray-400 text-sm">{size} {rates.unit} &middot; {TIERS.find(t => t.key === complexity)?.label} tier</p>
                 )}
               </div>
-
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-none p-12 mb-8 text-center">
                 <p className="text-green-700/60 text-sm font-medium mb-2 uppercase tracking-wide">Estimated Cost</p>
                 <p className="text-4xl font-extrabold text-green-700">
@@ -319,14 +293,12 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
                 <div className="w-12 h-0.5 bg-green-300 mx-auto my-5" />
                 <p className="text-xs text-green-600/50">Based on current Lane County, OR rates</p>
               </div>
-
               <button
                 onClick={() => setStep('contact')}
                 className="w-full bg-[#d4662a] hover:bg-[#b85521] text-white font-bold py-3.5 rounded-none transition-colors mb-4"
               >
                 Get an Exact Quote
               </button>
-
               <div className="text-center">
                 <a href="tel:5415254133" className="text-[#d4662a] text-sm font-semibold hover:underline">
                   Or call (541) 525-4133
@@ -334,7 +306,6 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
               </div>
             </div>
           )}
-
           {/* Step 4: Contact */}
           {step === 'contact' && (
             <div>
@@ -342,12 +313,10 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
                 &larr; Back
               </button>
               <h3 className="font-bold text-lg text-[#2c3e50] mb-2">Get Your Exact Quote</h3>
-
               <div className="bg-gray-50 rounded-none p-5 mb-6 flex items-center justify-between text-sm">
                 <span className="text-gray-500">{PROJECT_RATES[projectType]?.label}</span>
                 <span className="font-bold text-[#2c3e50]">${estimateLow.toLocaleString()} &ndash; ${estimateHigh.toLocaleString()}</span>
               </div>
-
               <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-semibold text-[#2c3e50] mb-2">Full Name</label>
@@ -380,7 +349,6 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
                   />
                 </div>
               </div>
-
               <button
                 onClick={handleSubmitLead}
                 disabled={isSubmitting || !contactInfo.fullName || !contactInfo.email || !contactInfo.phone}
@@ -388,11 +356,9 @@ export default function EstimatorModal({ isOpen, onClose }: EstimatorModalProps)
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Request'}
               </button>
-
               <p className="text-[10px] text-gray-400 text-center mt-4">We&apos;ll contact you within 24 hours. No spam, ever.</p>
             </div>
           )}
-
           {/* Step 5: Done */}
           {step === 'submitted' && (
             <div className="text-center py-10">
