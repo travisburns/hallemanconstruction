@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { LeadCreateDto, LoginRequest, LoginResponse, Lead, LeadStats } from './types'
+import type { LeadCreateDto, LoginRequest, LoginResponse, RegisterRequest, Lead, LeadStats } from './types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5057/api'
 
@@ -86,6 +86,10 @@ export const authApi = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
     const response = await api.post('/auth/login', credentials)
     return response.data
+  },
+
+  register: async (data: RegisterRequest): Promise<void> => {
+    await api.post('/auth/register', data)
   },
 
   logout: () => {
