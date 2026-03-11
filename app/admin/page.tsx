@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useLeads } from '../hooks/useLeads'
 import { formatDate, formatDateTime, formatPhoneNumber, formatCurrency, getStatusColor, getPriorityColor } from '../lib/formatters'
+import { authApi } from '../lib/api'
 import type { Lead } from '../lib/types'
 
 const STATUS_OPTIONS = [
@@ -36,6 +37,13 @@ export default function AdminDashboard() {
   const [editingNotes, setEditingNotes] = useState(false)
   const [notesValue, setNotesValue] = useState('')
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null)
+  const [showCreateUser, setShowCreateUser] = useState(false)
+  const [createUserForm, setCreateUserForm] = useState({ username: '', email: '', fullName: '', password: '', confirmPassword: '' })
+  const [createUserError, setCreateUserError] = useState('')
+  const [createUserSuccess, setCreateUserSuccess] = useState('')
+  const [createUserLoading, setCreateUserLoading] = useState(false)
+  const [authMode, setAuthMode] = useState<'signin' | 'register'>('signin')
+
 
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
@@ -99,6 +107,36 @@ export default function AdminDashboard() {
     setNotesValue(lead.contractorNotes || '')
   }
 
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setCreateUserError('')
+    setCreateUserSuccess('')
+
+    if (createUserForm.password !== createUserForm.confirmPassword) {
+      setCreateUserError('Passwords do not match')
+      return
+    }
+
+    setCreateUserLoading(true)
+    try {
+      await authApi.register({
+        username: createUserForm.username,
+        email: createUserForm.email,
+        fullName: createUserForm.fullName,
+        password: createUserForm.password,
+        role: 'admin',
+      })
+      setCreateUserSuccess('Account created successfully!')
+      setCreateUserForm({ username: '', email: '', fullName: '', password: '', confirmPassword: '' })
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { errors?: string[] } } }
+      const msgs = axiosErr?.response?.data?.errors
+      setCreateUserError(msgs?.join(' ') || 'Failed to create account. Please try again.')
+    } finally {
+      setCreateUserLoading(false)
+    }
+  }
+
   // Loading state
   if (authLoading) {
     return (
@@ -111,70 +149,168 @@ export default function AdminDashboard() {
     )
   }
 
-  // Login screen
+// Login / Register screen
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)' }}>
         <div className="w-full max-w-md">
-          {/* Login card */}
           <div className="bg-white shadow-2xl overflow-hidden" style={{ borderRadius: '10px' }}>
-            {/* Card header */}
-            <div className="px-8 pt-10 pb-6 text-center">
+            <div className="px-8 pt-10 pb-5 text-center">
               <h1 className="text-2xl font-bold" style={{ color: '#2c3e50' }}>
                 Halleman Construction <span style={{ color: '#d4662a', fontWeight: 400, fontSize: '0.85rem' }}>LLC</span>
               </h1>
-              <p className="text-sm mt-2" style={{ color: '#7f8c8d' }}>Admin Dashboard</p>
+              <p className="text-sm mt-1" style={{ color: '#7f8c8d' }}>Admin Dashboard</p>
             </div>
 
-            <div className="px-8 pb-10">
-              {loginError && (
-                <div className="mb-5 px-4 py-3 text-sm font-medium" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', borderRadius: '5px' }}>
-                  {loginError}
-                </div>
-              )}
-
-              <form onSubmit={handleLogin} className="space-y-5">
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#2c3e50' }}>Username</label>
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 border transition-all"
-                    style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
-                    onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
-                    onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#2c3e50' }}>Password</label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 border transition-all"
-                    style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
-                    onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
-                    onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
-                  />
-                </div>
-
+            {/* Tab toggle */}
+            <div className="px-8 pb-1">
+              <div className="flex" style={{ background: '#f8f9fa', borderRadius: '7px', padding: '3px' }}>
                 <button
-                  type="submit"
-                  className="w-full font-semibold text-white py-3 transition-all hover:translate-y-[-2px]"
-                  style={{ background: '#d4662a', borderRadius: '5px', border: 'none', cursor: 'pointer' }}
-                  onMouseOver={(e) => (e.currentTarget.style.background = '#b85521')}
-                  onMouseOut={(e) => (e.currentTarget.style.background = '#d4662a')}
+                  type="button"
+                  onClick={() => { setAuthMode('signin'); setLoginError(''); setCreateUserError(''); setCreateUserSuccess('') }}
+                  className="flex-1 text-sm font-semibold py-2 transition-all"
+                  style={{
+                    borderRadius: '5px', border: 'none', cursor: 'pointer',
+                    background: authMode === 'signin' ? '#fff' : 'transparent',
+                    color: authMode === 'signin' ? '#2c3e50' : '#7f8c8d',
+                    boxShadow: authMode === 'signin' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  }}
                 >
                   Sign In
                 </button>
-              </form>
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('register'); setLoginError(''); setCreateUserError(''); setCreateUserSuccess('') }}
+                  className="flex-1 text-sm font-semibold py-2 transition-all"
+                  style={{
+                    borderRadius: '5px', border: 'none', cursor: 'pointer',
+                    background: authMode === 'register' ? '#fff' : 'transparent',
+                    color: authMode === 'register' ? '#2c3e50' : '#7f8c8d',
+                    boxShadow: authMode === 'register' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  }}
+                >
+                  Create Account
+                </button>
+              </div>
+            </div>
+
+            <div className="px-8 py-6">
+              {/* Sign In */}
+              {authMode === 'signin' && (
+                <>
+                  {loginError && (
+                    <div className="mb-5 px-4 py-3 text-sm font-medium" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', borderRadius: '5px' }}>
+                      {loginError}
+                    </div>
+                  )}
+                  <form onSubmit={handleLogin} className="space-y-5">
+                    <div>
+                      <label className="block text-sm font-semibold mb-2" style={{ color: '#2c3e50' }}>Username</label>
+                      <input
+                        type="text" value={username} onChange={(e) => setUsername(e.target.value)} required
+                        className="w-full px-4 py-3 border transition-all"
+                        style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
+                        onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
+                        onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold mb-2" style={{ color: '#2c3e50' }}>Password</label>
+                      <input
+                        type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
+                        className="w-full px-4 py-3 border transition-all"
+                        style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
+                        onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
+                        onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
+                      />
+                    </div>
+                    <button type="submit" className="w-full font-semibold text-white py-3 transition-all"
+                      style={{ background: '#d4662a', borderRadius: '5px', border: 'none', cursor: 'pointer' }}
+                      onMouseOver={(e) => (e.currentTarget.style.background = '#b85521')}
+                      onMouseOut={(e) => (e.currentTarget.style.background = '#d4662a')}
+                    >
+                      Sign In
+                    </button>
+                  </form>
+                </>
+              )}
+
+              {/* Create Account */}
+              {authMode === 'register' && (
+                <>
+                  {createUserError && (
+                    <div className="mb-4 px-4 py-3 text-sm font-medium" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', borderRadius: '5px' }}>
+                      {createUserError}
+                    </div>
+                  )}
+                  {createUserSuccess && (
+                    <div className="mb-4 px-4 py-3 text-sm font-medium" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', color: '#166534', borderRadius: '5px' }}>
+                      {createUserSuccess}{' '}
+                      <button type="button" onClick={() => { setAuthMode('signin'); setCreateUserSuccess('') }}
+                        style={{ fontWeight: 700, textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', color: '#166534', padding: 0 }}
+                      >
+                        Sign in now
+                      </button>
+                    </div>
+                  )}
+                  <form onSubmit={handleCreateUser} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold mb-1.5" style={{ color: '#2c3e50' }}>Full Name</label>
+                      <input type="text" value={createUserForm.fullName} onChange={(e) => setCreateUserForm({ ...createUserForm, fullName: e.target.value })}
+                        required placeholder="Jane Doe" className="w-full px-4 py-3 border text-sm transition-all"
+                        style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
+                        onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
+                        onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold mb-1.5" style={{ color: '#2c3e50' }}>Username</label>
+                      <input type="text" value={createUserForm.username} onChange={(e) => setCreateUserForm({ ...createUserForm, username: e.target.value })}
+                        required placeholder="janedoe" className="w-full px-4 py-3 border text-sm transition-all"
+                        style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
+                        onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
+                        onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold mb-1.5" style={{ color: '#2c3e50' }}>Email</label>
+                      <input type="email" value={createUserForm.email} onChange={(e) => setCreateUserForm({ ...createUserForm, email: e.target.value })}
+                        required placeholder="jane@example.com" className="w-full px-4 py-3 border text-sm transition-all"
+                        style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
+                        onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
+                        onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold mb-1.5" style={{ color: '#2c3e50' }}>Password</label>
+                      <input type="password" value={createUserForm.password} onChange={(e) => setCreateUserForm({ ...createUserForm, password: e.target.value })}
+                        required placeholder="Min 8 chars, upper + lower + number" className="w-full px-4 py-3 border text-sm transition-all"
+                        style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
+                        onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
+                        onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold mb-1.5" style={{ color: '#2c3e50' }}>Confirm Password</label>
+                      <input type="password" value={createUserForm.confirmPassword} onChange={(e) => setCreateUserForm({ ...createUserForm, confirmPassword: e.target.value })}
+                        required className="w-full px-4 py-3 border text-sm transition-all"
+                        style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
+                        onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
+                        onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
+                      />
+                    </div>
+                    <button type="submit" disabled={createUserLoading} className="w-full font-semibold text-white py-3 text-sm transition-all"
+                      style={{ background: createUserLoading ? '#e0a070' : '#d4662a', borderRadius: '5px', border: 'none', cursor: createUserLoading ? 'not-allowed' : 'pointer' }}
+                      onMouseOver={(e) => { if (!createUserLoading) e.currentTarget.style.background = '#b85521' }}
+                      onMouseOut={(e) => { if (!createUserLoading) e.currentTarget.style.background = '#d4662a' }}
+                    >
+                      {createUserLoading ? 'Creating account...' : 'Create Account'}
+                    </button>
+                  </form>
+                </>
+              )}
             </div>
           </div>
-
           <p className="text-center text-white/30 text-xs mt-6">Halleman Construction LLC &middot; Eugene, OR</p>
         </div>
       </div>
@@ -196,8 +332,17 @@ export default function AdminDashboard() {
                 Admin
               </span>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <span className="hidden sm:inline text-sm text-white/60">{user?.fullName}</span>
+              <button
+                onClick={() => { setShowCreateUser(true); setCreateUserError(''); setCreateUserSuccess('') }}
+                className="text-sm font-medium px-4 py-2 transition-all"
+                style={{ background: 'rgba(212,102,42,0.3)', color: '#fff', borderRadius: '5px', border: '1px solid rgba(212,102,42,0.5)', cursor: 'pointer' }}
+                onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(212,102,42,0.5)' }}
+                onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(212,102,42,0.3)' }}
+              >
+                + New User
+              </button>
               <button
                 onClick={logout}
                 className="text-sm font-medium px-4 py-2 transition-all"
@@ -638,6 +783,144 @@ export default function AdminDashboard() {
           )}
         </div>
       </main>
+
+      {/* Create User Modal */}
+      {showCreateUser && (
+        <div
+          className="fixed inset-0 flex items-center justify-center p-4 z-50"
+          style={{ background: 'rgba(0,0,0,0.5)' }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowCreateUser(false) }}
+        >
+          <div className="bg-white w-full max-w-md" style={{ borderRadius: '10px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
+            {/* Modal header */}
+            <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #f0f0f0' }}>
+              <h2 className="text-lg font-bold" style={{ color: '#2c3e50' }}>Create Admin Account</h2>
+              <button
+                onClick={() => setShowCreateUser(false)}
+                style={{ color: '#7f8c8d', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
+                onMouseOver={(e) => (e.currentTarget.style.color = '#2c3e50')}
+                onMouseOut={(e) => (e.currentTarget.style.color = '#7f8c8d')}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="px-6 py-5">
+              {createUserError && (
+                <div className="mb-4 px-4 py-3 text-sm font-medium" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', borderRadius: '5px' }}>
+                  {createUserError}
+                </div>
+              )}
+              {createUserSuccess && (
+                <div className="mb-4 px-4 py-3 text-sm font-medium" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', color: '#166534', borderRadius: '5px' }}>
+                  {createUserSuccess}
+                </div>
+              )}
+
+              <form onSubmit={handleCreateUser} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5" style={{ color: '#2c3e50' }}>Full Name</label>
+                  <input
+                    type="text"
+                    value={createUserForm.fullName}
+                    onChange={(e) => setCreateUserForm({ ...createUserForm, fullName: e.target.value })}
+                    required
+                    placeholder="Jane Doe"
+                    className="w-full px-3 py-2.5 border text-sm"
+                    style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
+                    onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
+                    onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5" style={{ color: '#2c3e50' }}>Username</label>
+                  <input
+                    type="text"
+                    value={createUserForm.username}
+                    onChange={(e) => setCreateUserForm({ ...createUserForm, username: e.target.value })}
+                    required
+                    placeholder="janedoe"
+                    className="w-full px-3 py-2.5 border text-sm"
+                    style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
+                    onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
+                    onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5" style={{ color: '#2c3e50' }}>Email</label>
+                  <input
+                    type="email"
+                    value={createUserForm.email}
+                    onChange={(e) => setCreateUserForm({ ...createUserForm, email: e.target.value })}
+                    required
+                    placeholder="jane@hallemanconstructionllc.com"
+                    className="w-full px-3 py-2.5 border text-sm"
+                    style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
+                    onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
+                    onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5" style={{ color: '#2c3e50' }}>Password</label>
+                  <input
+                    type="password"
+                    value={createUserForm.password}
+                    onChange={(e) => setCreateUserForm({ ...createUserForm, password: e.target.value })}
+                    required
+                    placeholder="Min 8 chars, upper + lower + number"
+                    className="w-full px-3 py-2.5 border text-sm"
+                    style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
+                    onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
+                    onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5" style={{ color: '#2c3e50' }}>Confirm Password</label>
+                  <input
+                    type="password"
+                    value={createUserForm.confirmPassword}
+                    onChange={(e) => setCreateUserForm({ ...createUserForm, confirmPassword: e.target.value })}
+                    required
+                    className="w-full px-3 py-2.5 border text-sm"
+                    style={{ borderColor: '#e1e8ed', borderRadius: '5px', outline: 'none' }}
+                    onFocus={(e) => { e.target.style.borderColor = '#d4662a'; e.target.style.boxShadow = '0 0 0 3px rgba(212,102,42,0.1)' }}
+                    onBlur={(e) => { e.target.style.borderColor = '#e1e8ed'; e.target.style.boxShadow = 'none' }}
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-1">
+                  <button
+                    type="submit"
+                    disabled={createUserLoading}
+                    className="flex-1 font-semibold text-white py-2.5 text-sm transition-all"
+                    style={{ background: createUserLoading ? '#e0a070' : '#d4662a', borderRadius: '5px', border: 'none', cursor: createUserLoading ? 'not-allowed' : 'pointer' }}
+                    onMouseOver={(e) => { if (!createUserLoading) e.currentTarget.style.background = '#b85521' }}
+                    onMouseOut={(e) => { if (!createUserLoading) e.currentTarget.style.background = '#d4662a' }}
+                  >
+                    {createUserLoading ? 'Creating...' : 'Create Account'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateUser(false)}
+                    className="px-4 py-2.5 text-sm font-medium"
+                    style={{ color: '#7f8c8d', background: 'none', border: '1px solid #e1e8ed', borderRadius: '5px', cursor: 'pointer' }}
+                    onMouseOver={(e) => { e.currentTarget.style.borderColor = '#bdc3c7'; e.currentTarget.style.color = '#2c3e50' }}
+                    onMouseOut={(e) => { e.currentTarget.style.borderColor = '#e1e8ed'; e.currentTarget.style.color = '#7f8c8d' }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
